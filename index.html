@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Campo Elétrico - Modo Avançado</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Campo Elétrico - Jogo Simples</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>⚡ Campo Elétrico - Modo Difícil</h1>
-    <canvas id="gameCanvas" width="600" height="600"></canvas>
+    <h1>⚡ Jogo: Campo Elétrico</h1>
+    <p>Clique na seta que representa a direção correta do campo elétrico.</p>
+
     <div class="hud">
       <span id="score">Pontos: 0</span>
       <span id="lives">Vidas: ❤️❤️❤️</span>
-      <span id="level">Nível: 1</span>
     </div>
-    <p>Clique na direção correta do campo elétrico no ponto indicado.</p>
-    <div id="options"></div>
+
+    <div id="game-area">
+      <!-- Setas e carga vão aparecer aqui -->
+    </div>
+
     <div id="feedback"></div>
-    <button id="next-btn" onclick="nextRound()">Próxima rodada</button>
+    <button id="next-btn" onclick="nextRound()">Próxima</button>
+
     <div id="game-over" style="display: none;">
-      <h2>🎮 Fim de jogo!</h2>
-      <button onclick="restartGame()">Jogar novamente</button>
+      <h2>💀 Fim de jogo</h2>
+      <button onclick="restartGame()">Jogar Novamente</button>
     </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
