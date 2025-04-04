@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f8ff;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+  }
+  
+  canvas {
+    background: #ffffff;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    margin: 20px 0;
+  }
+  
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 18px;
+  }
+  
+  #options {
+    margin: 10px;
+  }
+  
+  .option {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e0e0e0;
+    border-radius: 8px;
+    margin: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .option:hover {
+    background: #b0e0e6;
+  }
+  
+  #feedback {
+    font-size: 20px;
+    margin: 10px;
+    height: 24px;
+  }
+  

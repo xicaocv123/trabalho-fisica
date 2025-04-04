@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Campo Elétrico - Modo Avançado</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>⚡ Campo Elétrico - Modo Difícil</h1>
+    <canvas id="gameCanvas" width="600" height="600"></canvas>
+    <div class="hud">
+      <span id="score">Pontos: 0</span>
+      <span id="lives">Vidas: ❤️❤️❤️</span>
+      <span id="level">Nível: 1</span>
+    </div>
+    <p>Clique na direção correta do campo elétrico no ponto indicado.</p>
+    <div id="options"></div>
+    <div id="feedback"></div>
+    <button id="next-btn" onclick="nextRound()">Próxima rodada</button>
+    <div id="game-over" style="display: none;">
+      <h2>🎮 Fim de jogo!</h2>
+      <button onclick="restartGame()">Jogar novamente</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
