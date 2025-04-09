@@ -1,33 +1,490 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Campo Elétrico - Jogo Simples</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo de Campo Elétrico</title>
+  <style>
+    /* Estilos gerais */
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+    }
+    #gameContainer {
+      width: 90%;
+      max-width: 600px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+      position: relative;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    #header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    #levelIndicator {
+      font-size: 1.2em;
+    }
+    #selectLevelBtn {
+      padding: 5px 10px;
+      font-size: 0.9em;
+      background-color: #007bff;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #selectLevelBtn:hover {
+      background-color: #0056b3;
+    }
+    .question {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    .options {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+    .options li {
+      margin: 10px 0;
+    }
+    .optionBtn {
+      width: 100%;
+      padding: 10px;
+      background-color: #222;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .optionBtn:hover {
+      background-color: #444;
+    }
+    .optionBtn.correct {
+      background-color: #28a745;
+      animation: correctAnimation 0.5s;
+    }
+    .optionBtn.wrong {
+      background-color: #dc3545;
+      animation: wrongAnimation 0.5s;
+    }
+    @keyframes correctAnimation {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    @keyframes wrongAnimation {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
+    }
+    #nextBtn, #continueBtn, #restartBtn {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+    #nextBtn:hover, #continueBtn:hover, #restartBtn:hover {
+      background-color: #0056b3;
+    }
+    #nextBtn, #continueBtn {
+      display: none;
+    }
+    #levelUpScreen, #result {
+      display: none;
+    }
+    /* Estilos para a tela de seleção de nível */
+    #levelSelection {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    #levelSelectionContent {
+      background: #222;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      min-width: 300px;
+    }
+    #levelSelectionContent h2 {
+      margin-bottom: 10px;
+    }
+    #levelSelectionContent button {
+      margin: 5px;
+      padding: 10px 20px;
+      background: #007bff;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #levelSelectionContent button:hover {
+      background: #0056b3;
+    }
+    #closeSelectionBtn {
+      margin-top: 10px;
+      background: #dc3545;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>⚡ Jogo: Campo Elétrico</h1>
-    <p>Clique na seta que representa a direção correta do campo elétrico.</p>
+  <!-- Elementos de áudio -->
+  <audio id="correctSound" src="correct.mp3"></audio>
+  <audio id="wrongSound" src="wrong.mp3"></audio>
+  <audio id="levelUpSound" src="levelup.mp3"></audio>
 
-    <div class="hud">
-      <span id="score">Pontos: 0</span>
-      <span id="lives">Vidas: ❤️❤️❤️</span>
+  <div id="gameContainer">
+    <div id="header">
+      <div id="levelIndicator">Nível: <span id="currentLevelName"></span></div>
+      <button id="selectLevelBtn">Selecionar Nível</button>
     </div>
-
-    <div id="game-area">
-      <!-- Setas e carga vão aparecer aqui -->
+    <h1>Jogo de Campo Elétrico</h1>
+    <div id="quiz">
+      <div class="question" id="questionText">Pergunta vai aparecer aqui</div>
+      <ul class="options" id="optionsList">
+        <!-- As opções serão inseridas aqui -->
+      </ul>
+      <button id="nextBtn">Próxima</button>
     </div>
-
-    <div id="feedback"></div>
-    <button id="next-btn" onclick="nextRound()">Próxima</button>
-
-    <div id="game-over" style="display: none;">
-      <h2>💀 Fim de jogo</h2>
-      <button onclick="restartGame()">Jogar Novamente</button>
+    <div id="levelUpScreen">
+      <h2>Parabéns, você completou este nível!</h2>
+      <button id="continueBtn">Continuar para o próximo nível</button>
+    </div>
+    <div id="result">
+      <h2>Fim do jogo!</h2>
+      <p>Sua pontuação: <span id="scoreDisplay"></span></p>
+      <button id="restartBtn">Reiniciar Jogo</button>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Tela de seleção de nível -->
+  <div id="levelSelection">
+    <div id="levelSelectionContent">
+      <h2>Selecione o Nível</h2>
+      <div id="levelButtons">
+        <!-- Botões dos níveis serão inseridos aqui -->
+      </div>
+      <button id="closeSelectionBtn">Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    // Definição dos níveis e das perguntas
+    const levels = [
+      {
+        name: "Nível 1",
+        questions: [
+          {
+            question: "Qual é a unidade do campo elétrico?",
+            options: ["Tesla", "Volt/m", "Newton/Coulomb", "Joule"],
+            answer: 2
+          },
+          {
+            question: "O campo elétrico é gerado por:",
+            options: ["Massas em repouso", "Cargas elétricas", "Ondas eletromagnéticas", "Forças nucleares"],
+            answer: 1
+          },
+          {
+            question: "Qual equação relaciona a força elétrica com o campo elétrico?",
+            options: ["F = ma", "F = qE", "F = G(m1*m2)/r²", "F = qV"],
+            answer: 1
+          }
+        ]
+      },
+      {
+        name: "Nível 2",
+        questions: [
+          {
+            question: "Qual das opções descreve melhor a direção de um campo elétrico?",
+            options: ["Sempre aponta para o norte", "Sempre se afasta de cargas positivas", "Sempre aponta para o centro de uma carga", "Sempre tangente à superfície condutora"],
+            answer: 1
+          },
+          {
+            question: "Qual dos seguintes pode ser considerado um bom condutor elétrico?",
+            options: ["Vidro", "Borracha", "Cobre", "Plástico"],
+            answer: 2
+          }
+        ]
+      },
+      {
+        name: "Nível 3",
+        questions: [
+          {
+            question: "Qual a relação entre o campo elétrico (E) e o potencial elétrico (V)?",
+            options: ["E = V", "E = -dV/dx", "E = dV/dx", "E = V²"],
+            answer: 1
+          },
+          {
+            question: "Qual é a propriedade de um campo elétrico uniforme?",
+            options: ["Suas linhas de força se curvam", "Suas linhas de força são paralelas e igualmente espaçadas", "Seu valor varia com a distância", "É gerado somente por dipolos"],
+            answer: 1
+          },
+          {
+            question: "Qual equação é conhecida como a Lei de Coulomb?",
+            options: ["F = k * (q1 * q2) / r²", "F = m * a", "F = qE", "F = V / R"],
+            answer: 0
+          },
+          {
+            question: "Em qual região o campo elétrico de uma carga puntual é mais intenso?",
+            options: ["Próximo à carga", "A uma grande distância", "Sempre igual em qualquer ponto", "No centro da carga"],
+            answer: 0
+          },
+          {
+            question: "Entre duas cargas de mesmo sinal, como se comporta o campo elétrico na região intermediária?",
+            options: ["É intensificado", "É atenuado", "Permanece inalterado", "Inverte de direção"],
+            answer: 1
+          }
+        ]
+      },
+      {
+        name: "Nível 4",
+        questions: [
+          {
+            question: "Qual é a relação entre a densidade de linhas de campo elétrico e a intensidade do campo?",
+            options: ["Maior densidade significa maior intensidade", "Maior densidade significa menor intensidade", "Não há relação", "A densidade é fixa"],
+            answer: 0
+          },
+          {
+            question: "Em um condutor em equilíbrio eletrostático, o campo elétrico interno é:",
+            options: ["Nulo", "Máximo", "Variável", "Negativo"],
+            answer: 0
+          },
+          {
+            question: "Qual é a direção do campo elétrico criado por uma carga positiva?",
+            options: ["Para dentro da carga", "Para fora da carga", "Circular", "Aleatória"],
+            answer: 1
+          },
+          {
+            question: "Qual fenômeno demonstra a influência do campo elétrico sobre partículas carregadas?",
+            options: ["Difração", "Interferência", "Ação da força elétrica", "Refração"],
+            answer: 2
+          },
+          {
+            question: "Qual fórmula relaciona a força elétrica com a carga e o campo elétrico?",
+            options: ["F = m*a", "F = qE", "F = E/q", "F = q/V"],
+            answer: 1
+          }
+        ]
+      }
+    ];
+
+    // Variáveis globais de controle
+    let currentLevelIndex = 0;
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let maxUnlockedLevel = 1; // Apenas o Nível 1 está desbloqueado inicialmente
+
+    // Cálculo do total de perguntas em todos os níveis
+    const totalQuestions = levels.reduce((total, level) => total + level.questions.length, 0);
+
+    // Elementos da página
+    const currentLevelNameSpan = document.getElementById("currentLevelName");
+    const questionText = document.getElementById("questionText");
+    const optionsList = document.getElementById("optionsList");
+    const nextBtn = document.getElementById("nextBtn");
+    const quizContainer = document.getElementById("quiz");
+    const levelUpScreen = document.getElementById("levelUpScreen");
+    const continueBtn = document.getElementById("continueBtn");
+    const resultContainer = document.getElementById("result");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const restartBtn = document.getElementById("restartBtn");
+    const selectLevelBtn = document.getElementById("selectLevelBtn");
+
+    // Elementos da tela de seleção de nível
+    const levelSelection = document.getElementById("levelSelection");
+    const levelButtons = document.getElementById("levelButtons");
+    const closeSelectionBtn = document.getElementById("closeSelectionBtn");
+
+    // Elementos de áudio
+    const audioCorrect = document.getElementById("correctSound");
+    const audioWrong = document.getElementById("wrongSound");
+    const audioLevelUp = document.getElementById("levelUpSound");
+
+    // Atualiza o indicador do nível atual
+    function updateLevelIndicator() {
+      currentLevelNameSpan.textContent = levels[currentLevelIndex].name;
+    }
+
+    // Exibe a pergunta atual do nível
+    function displayQuestion() {
+      // Limpa as opções e oculta o botão "Próxima"
+      optionsList.innerHTML = "";
+      nextBtn.style.display = "none";
+      
+      const currentLevel = levels[currentLevelIndex];
+      const currentQuestion = currentLevel.questions[currentQuestionIndex];
+      questionText.textContent = currentQuestion.question;
+      
+      // Cria botões para cada opção de resposta
+      currentQuestion.options.forEach((option, index) => {
+        const li = document.createElement("li");
+        const button = document.createElement("button");
+        button.textContent = option;
+        button.className = "optionBtn";
+        button.addEventListener("click", () => selectAnswer(index, button));
+        li.appendChild(button);
+        optionsList.appendChild(li);
+      });
+    }
+
+    // Função para selecionar uma resposta
+    function selectAnswer(selectedIndex, buttonElement) {
+      const currentLevel = levels[currentLevelIndex];
+      const currentQuestion = currentLevel.questions[currentQuestionIndex];
+      
+      // Desabilita as opções após a resposta
+      Array.from(document.getElementsByClassName("optionBtn")).forEach(btn => {
+        btn.disabled = true;
+      });
+      
+      // Verifica se a resposta está correta e toca o som correspondente
+      if (selectedIndex === currentQuestion.answer) {
+        buttonElement.classList.add("correct");
+        score++;
+        audioCorrect.play();
+      } else {
+        buttonElement.classList.add("wrong");
+        // Destaca a resposta correta
+        Array.from(document.getElementsByClassName("optionBtn")).forEach(btn => {
+          if (btn.textContent === currentQuestion.options[currentQuestion.answer]) {
+            btn.classList.add("correct");
+          }
+        });
+        audioWrong.play();
+      }
+      
+      // Exibe o botão "Próxima" após um curto intervalo
+      setTimeout(() => {
+        nextBtn.style.display = "inline-block";
+      }, 1000);
+    }
+
+    // Próxima pergunta ou transição para o próximo nível
+    function nextQuestion() {
+      const currentLevel = levels[currentLevelIndex];
+      currentQuestionIndex++;
+      if (currentQuestionIndex < currentLevel.questions.length) {
+        displayQuestion();
+      } else {
+        // Atualiza o desbloqueio do próximo nível, se aplicável
+        if (maxUnlockedLevel < levels.length) {
+          maxUnlockedLevel = currentLevelIndex + 2;
+        }
+        // Se houver próximo nível, mostra a tela de transição; caso contrário, exibe o resultado final
+        if (currentLevelIndex < levels.length - 1) {
+          showLevelUp();
+        } else {
+          showResult();
+        }
+      }
+    }
+
+    // Exibe a tela de "Nível Completo"
+    function showLevelUp() {
+      quizContainer.style.display = "none";
+      levelUpScreen.style.display = "block";
+      audioLevelUp.play();
+    }
+
+    // Continua para o próximo nível (progressão automática)
+    function continueToNextLevel() {
+      currentLevelIndex++;
+      currentQuestionIndex = 0;
+      updateLevelIndicator();
+      levelUpScreen.style.display = "none";
+      quizContainer.style.display = "block";
+      displayQuestion();
+    }
+
+    // Exibe a tela de resultado final
+    function showResult() {
+      quizContainer.style.display = "none";
+      resultContainer.style.display = "block";
+      scoreDisplay.textContent = `${score} / ${totalQuestions}`;
+    }
+
+    // Reinicia o jogo
+    function restartGame() {
+      currentLevelIndex = 0;
+      currentQuestionIndex = 0;
+      score = 0;
+      maxUnlockedLevel = 1;
+      resultContainer.style.display = "none";
+      quizContainer.style.display = "block";
+      updateLevelIndicator();
+      displayQuestion();
+    }
+
+    // Funções de seleção de nível (menu)
+    function showLevelSelection() {
+      // Limpa os botões de nível e cria um botão para cada nível desbloqueado
+      levelButtons.innerHTML = "";
+      for (let i = 0; i < maxUnlockedLevel; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = levels[i].name;
+        btn.addEventListener("click", () => {
+          currentLevelIndex = i;
+          currentQuestionIndex = 0;
+          updateLevelIndicator();
+          hideLevelSelection();
+          // Se o usuário estiver no meio de um nível, mostra o quiz novamente
+          quizContainer.style.display = "block";
+          levelUpScreen.style.display = "none";
+          resultContainer.style.display = "none";
+          displayQuestion();
+        });
+        levelButtons.appendChild(btn);
+      }
+      levelSelection.style.display = "flex";
+    }
+
+    function hideLevelSelection() {
+      levelSelection.style.display = "none";
+    }
+
+    // Eventos dos botões
+    nextBtn.addEventListener("click", nextQuestion);
+    continueBtn.addEventListener("click", continueToNextLevel);
+    restartBtn.addEventListener("click", restartGame);
+    selectLevelBtn.addEventListener("click", showLevelSelection);
+    closeSelectionBtn.addEventListener("click", hideLevelSelection);
+
+    // Inicializa o jogo
+    updateLevelIndicator();
+    displayQuestion();
+  </script>
 </body>
 </html>
